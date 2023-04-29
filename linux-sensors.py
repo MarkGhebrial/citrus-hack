@@ -1,7 +1,7 @@
 from sensor_interface import Sensors, Process
 
 import os
-rootdir = '/proc'
+import time
 
 clk_tc = int(os.sysconf("SC_CLK_TCK"))
 
@@ -14,6 +14,8 @@ class LinuxProcess(Process):
         self.prev_proc_total = 0
         self.prev_cpu_total = 0
 
+        self.get_cpu_percent()
+
     def process_total(self) -> float:
         try:
             # Open the stat file for the process
@@ -24,8 +26,8 @@ class LinuxProcess(Process):
         contents = f.readline()
         contents = contents.split(" ")
 
-        utime = int(contents[13])#/clk_tc
-        stime = int(contents[14])
+        utime = int(contents[13]) / clk_tc#/clk_tc
+        stime = int(contents[14]) / clk_tc
 
         return float(utime + stime)
 
@@ -38,7 +40,7 @@ class LinuxProcess(Process):
             i = int(i)
             cputotal += i
 
-        return(float(cputotal))
+        return(float(cputotal)) / clk_tc
 
     def get_cpu_percent(self) -> float:
         self.prev_proc_total = self.proc_total
@@ -47,7 +49,14 @@ class LinuxProcess(Process):
         self.proc_total = self.process_total()
         self.cpu_tot = LinuxProcess.cpu_total()
 
-        return ((self.proc_total - self.prev_proc_total) / (self.cpu_tot - self.prev_cpu_total) * 100)
+        elapsed_process_time = self.proc_total - self.prev_proc_total
+        elapsed_cpu_time = self.cpu_tot - self.prev_cpu_total
+
+        # Don't divide by zero if no time has elapsed
+        if elapsed_cpu_time == 0:
+            return 0
+
+        return (elapsed_process_time / elapsed_cpu_time * 100)
 
 
     def get_power_draw(self) -> float:
@@ -81,14 +90,7 @@ class LinuxSensors(Sensors):
 
             name = contents[1][1:-1]
             pid = int(contents[0]) # The name of the directory is the PID
-
-            # Calculate the process' CPU usage
-
-            utime = int(contents[13])#/clk_tc
-            stime = int(contents[14])
-
-            power_draw = 0
-        
+      
             out.append(Process(name, pid))#, cpu_percent, power_draw))
 
         return out
@@ -107,12 +109,10 @@ if firefox is None:
 
 firefox = LinuxProcess("firefox", 1188)
 
-from time import sleep
-
 while True:
     #print(firefox.process_total(), LinuxProcess.cpu_total())
     print(firefox.get_cpu_percent())
-    sleep(0)
+    time.sleep(1)
 
 for proc in LinuxSensors.get_process_list():
     print(proc)
