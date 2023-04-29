@@ -2,6 +2,7 @@ App lives in system tray
 
 Features
 - Tracks battery usage/power consumption per process
+  - File that contains the power draw in microwatts: `/sys/class/power_supply/BAT0/power_now`
 - Tracks display power consumption
 - Tracks usb device power consumption
 - Tells you what process uses the most power
