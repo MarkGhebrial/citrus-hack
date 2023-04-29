@@ -1,8 +1,18 @@
 class Process:
-    def __init__(self, name: str, cpu_percent: float, power_draw: float):
+    def __init__(self, name: str, pid: int):
         self.name = name
-        self.cpu_percent = cpu_percent
-        self.power_draw = power_draw
+        self.pid = pid
+        # self.cpu_percent = cpu_percent
+        # self.power_draw = power_draw
+
+    def __str__(self) -> str:
+        return "{}: PID: {}; CPU Percent: {}; Power Draw (W): {}".format(self.name, self.pid, self.cpu_percent, self.power_draw)
+    
+    def get_cpu_percent(self) -> float:
+        pass
+
+    def get_power_draw(self) -> float:
+        pass
 
 class Sensors:
     def get_power_consumption() -> float:
@@ -10,5 +20,5 @@ class Sensors:
         '''
         pass
 
-    def get_process_list() -> List[Process]:
+    def get_process_list() -> list[Process]:
         pass
