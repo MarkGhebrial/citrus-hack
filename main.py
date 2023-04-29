@@ -3,50 +3,31 @@ import threading
 import time
 
 from pystray import Icon, Menu as menu, MenuItem as item
-from PIL import Image, ImageDraw, ImageColor
+from PIL import Image, ImageDraw, ImageColor, ImageFont
 
 clicks = []
-
-# Creates an image with a colored pattern
-def create_image():
-    bgColor = input("Enter a background color: ")
-    frColor1 = input("Enter a color: ")
-    frColor2 = input("Enter a second color: ")
-
-    width = 512
-    height = 512
-    # Generate an image and draw a pattern
-    image = Image.new('RGB', (width, height), ImageColor.getrgb(bgColor))
-    dc = ImageDraw.Draw(image)
-    dc.rectangle(
-        (width // 2, 0, width, height // 2),
-        fill=ImageColor.getrgb(frColor1))
-    dc.rectangle(
-        (0, height // 2, width // 2, height),
-        fill=ImageColor.getrgb(frColor2))
-
-    return image
+number = 0
 
 # Checks when the icon is clicked
 def on_clicked(icon, item):
     print(icon)
     print(item)
 
-def image(): # color1, color2, width=512, height=512
-    #bgColor = input("Enter a background color: ")
-    frColor1 = input("Enter a color: ")
-    frColor2 = input("Enter a second color: ")
+# Make a 
+def image():
+    global number
 
-    width = 512
-    height = 512
+    width = 64
+    height = 64
 
-    image = Image.new('RGB', (width, height), frColor1)
-    dc = ImageDraw.Draw(image)
+    picture = Image.new("RGB", (width, height), (0, 0, 0))
+    d = ImageDraw.Draw(picture)
+    d.font = ImageFont.truetype("Hack-Regular.ttf", 50)
+    
+    d.text((0, 0), str(number), fill=(255, 255, 255), align='center')
+    number += 1
 
-    dc.rectangle((width // 2, 0, width, height // 2), fill=frColor2)
-    dc.rectangle((0, height // 2, width // 2, height), fill=frColor2)
-
-    return image
+    return picture
 
 class IconThread(threading.Thread):
     def __init__(self, *icon_args, **icon_kwargs):
@@ -67,8 +48,7 @@ class IconThread(threading.Thread):
                 icon.icon = images[len(clicks) % len(images)]
 
         images = (image(), image())
-        self.icon = Icon(
-            'test',
+        self.icon = Icon('test',
             icon=images[0],
             menu=menu(item('Toggle ', on_activate)))
 
