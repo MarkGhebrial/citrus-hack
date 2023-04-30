@@ -7,6 +7,9 @@ class Process:
 
     def __str__(self) -> str:
         return "{}: PID: {}; CPU Percent: {}; Power Draw (W): {}".format(self.name, self.pid, self.cpu_percent, self.power_draw)
+
+    def __eq__(self, __o: object) -> bool:
+        return self.pid == __o.pid
     
     def get_cpu_percent(self) -> float:
         pass

@@ -98,21 +98,29 @@ class LinuxSensors(Sensors):
 print(LinuxSensors.get_power_consumption())
 
 procs = LinuxSensors.get_process_list()
-firefox = None
-for p in procs:
-    if p.name == "firefox":
-        firefox = p
-        break
-
-if firefox is None:
-    exit(3)
-
-firefox = LinuxProcess("firefox", 1188)
 
 while True:
     #print(firefox.process_total(), LinuxProcess.cpu_total())
-    print(firefox.get_cpu_percent())
-    time.sleep(1)
 
-for proc in LinuxSensors.get_process_list():
-    print(proc)
+    # Update the list of Processes
+    new_procs = LinuxSensors.get_process_list()
+    for new_proc in new_procs:
+        if new_proc not in procs:
+            procs.append(new_proc)
+    for proc in procs:
+        if proc not in new_procs:
+            pass#procs.remove(proc)
+
+    proc_list = []
+    for p in procs:
+        proc_list.append((p, p.get_cpu_percent()))
+
+    proc_list.sort(key=lambda proc: proc[1], reverse=True)
+    
+    print("Most intensive processes: ",
+        proc_list[0][0].name, proc_list[0][1],
+        proc_list[1][0].name, proc_list[1][1],
+        proc_list[2][0].name, proc_list[2][1]
+    )
+
+    time.sleep(1)
