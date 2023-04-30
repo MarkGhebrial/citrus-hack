@@ -2,6 +2,8 @@ import pystray
 import threading
 import time
 
+from linux_sensors import LinuxSensors
+
 from menu import popUpMenu
 from pystray import Icon, Menu as menu, MenuItem as item
 from PIL import Image, ImageDraw, ImageColor, ImageFont
@@ -48,13 +50,14 @@ class IconThread(threading.Thread):
         if self.icon:
             self.icon.stop()
 
-icon_thread = IconThread(Icon('test', icon=image(0), menu=popUpMenu()))
+icon_thread = IconThread(Icon('TODO: Update Name', icon=image(0), menu=popUpMenu(LinuxSensors())))
 icon_thread.start()
 
 try:
     while True:
-        time.sleep(.1)
+        time.sleep(1)
         icon_thread.icon.icon = image(number)
+        icon_thread.icon.menu = popUpMenu(LinuxSensors())
         number += 1
 except KeyboardInterrupt:
     icon_thread.stop()

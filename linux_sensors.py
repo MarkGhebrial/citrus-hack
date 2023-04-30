@@ -1,7 +1,6 @@
 from sensor_interface import Sensors, Process
 
 import os
-import time
 
 clk_tc = int(os.sysconf("SC_CLK_TCK"))
 
@@ -63,7 +62,7 @@ class LinuxProcess(Process):
         pass
 
 class LinuxSensors(Sensors):
-    def get_power_consumption() -> float:
+    def get_power_consumption(self) -> float:
         '''Returns the power draw of the system in Watts
         '''
 
@@ -72,7 +71,7 @@ class LinuxSensors(Sensors):
         return microwatts / 1000000
 
     # https://man7.org/linux/man-pages/man5/proc.5.html
-    def get_process_list() -> list[Process]:
+    def get_process_list(self) -> list[Process]:
         out = []
 
         # Iterate through the process directories
@@ -91,28 +90,34 @@ class LinuxSensors(Sensors):
             name = contents[1][1:-1]
             pid = int(contents[0]) # The name of the directory is the PID
       
-            out.append(Process(name, pid))#, cpu_percent, power_draw))
+            out.append(LinuxProcess(name, pid))#, cpu_percent, power_draw))
 
         return out
 
-print(LinuxSensors.get_power_consumption())
+# procs = LinuxSensors.get_process_list()
 
-procs = LinuxSensors.get_process_list()
-firefox = None
-for p in procs:
-    if p.name == "firefox":
-        firefox = p
-        break
+# while True:
+#     #print(firefox.process_total(), LinuxProcess.cpu_total())
 
-if firefox is None:
-    exit(3)
+#     # Update the list of Processes
+#     new_procs = LinuxSensors.get_process_list()
+#     for new_proc in new_procs:
+#         if new_proc not in procs:
+#             procs.append(new_proc)
+#     for proc in procs:
+#         if proc not in new_procs:
+#             pass#procs.remove(proc)
 
-firefox = LinuxProcess("firefox", 1188)
+#     proc_list = []
+#     for p in procs:
+#         proc_list.append((p, p.get_cpu_percent()))
 
-while True:
-    #print(firefox.process_total(), LinuxProcess.cpu_total())
-    print(firefox.get_cpu_percent())
-    time.sleep(1)
+#     proc_list.sort(key=lambda proc: proc[1], reverse=True)
+    
+#     print("Most intensive processes: ",
+#         proc_list[0][0].name, proc_list[0][1],
+#         proc_list[1][0].name, proc_list[1][1],
+#         proc_list[2][0].name, proc_list[2][1]
+#     )
 
-for proc in LinuxSensors.get_process_list():
-    print(proc)
+#     time.sleep(1)
