@@ -18,10 +18,10 @@ class Process:
         pass
 
 class Sensors:
-    def get_power_consumption() -> float:
+    def get_power_consumption(self) -> float:
         '''Returns the power draw of the system in Watts
         '''
         pass
 
-    def get_process_list() -> list[Process]:
+    def get_process_list(self) -> list[Process]:
         pass
