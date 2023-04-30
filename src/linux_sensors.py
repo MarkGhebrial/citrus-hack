@@ -62,6 +62,9 @@ class LinuxProcess(Process):
         pass
 
 class LinuxSensors(Sensors):
+    def __init__(self):
+        self.process_list = []
+
     def get_power_consumption(self) -> float:
         '''Returns the power draw of the system in Watts
         '''
@@ -72,7 +75,10 @@ class LinuxSensors(Sensors):
 
     # https://man7.org/linux/man-pages/man5/proc.5.html
     def get_process_list(self) -> list[Process]:
-        out = []
+        '''Update and return the list of `Process`es
+        '''
+
+        new_process_list = []
 
         # Iterate through the process directories
         for process_dir in os.listdir("/proc"):
@@ -90,9 +96,19 @@ class LinuxSensors(Sensors):
             name = contents[1][1:-1]
             pid = int(contents[0]) # The name of the directory is the PID
       
-            out.append(LinuxProcess(name, pid))#, cpu_percent, power_draw))
+            new_process_list.append(LinuxProcess(name, pid))#, cpu_percent, power_draw))
 
-        return out
+        # Add new processes to the list
+        for new_proc in new_process_list:
+            if new_proc not in self.process_list:
+                self.process_list.append(new_proc)
+
+        # Remopve dead processes from the list
+        for old_proc in self.process_list:
+            if old_proc not in new_process_list:
+                self.process_list.remove(old_proc)
+
+        return self.process_list
 
 # procs = LinuxSensors.get_process_list()
 

@@ -7,20 +7,10 @@ from sensor_interface import *
 from pystray import Icon, Menu as menu, MenuItem as item
 from PIL import Image, ImageDraw, ImageColor, ImageFont
 
-procs = []
-
 # Generate the menu that appears when the icon is right-clicked
 def popUpMenu(sensors: Sensors):
-    global procs
-
-    # Update the list of Processes. TODO: Do this efficiently
-    new_procs = sensors.get_process_list()
-    for new_proc in new_procs:
-        if new_proc not in procs:
-            procs.append(new_proc)
-    for proc in procs:
-        if proc not in new_procs:
-            procs.remove(proc)
+    
+    procs = sensors.get_process_list()
 
     # Calculate the CPU load of each process
     proc_list = []
