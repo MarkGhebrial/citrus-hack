@@ -91,11 +91,9 @@ class LinuxSensors(Sensors):
             name = contents[1][1:-1]
             pid = int(contents[0]) # The name of the directory is the PID
       
-            out.append(Process(name, pid))#, cpu_percent, power_draw))
+            out.append(LinuxProcess(name, pid))#, cpu_percent, power_draw))
 
         return out
-
-print(LinuxSensors.get_power_consumption())
 
 procs = LinuxSensors.get_process_list()
 
