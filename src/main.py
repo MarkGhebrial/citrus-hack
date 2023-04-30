@@ -18,22 +18,17 @@ def on_clicked(icon, item):
 
 # Make an image using numbers
 def image(num):
-
-    if number >= 50:
-        txtColor = 'red'
-    elif number > 16 and number < 50:
-        txtColor = 'orange'
-    else:
-        txtColor = 'lime'
-
     width = 128
-    height = 64
+    height = 128
 
-    picture = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    picture = Image.new("RGBA", (width, height), (0, 0, 0, 255))
     d = ImageDraw.Draw(picture)
-    d.font = ImageFont.truetype("Hack-Regular.ttf", 40)
+    d.font = ImageFont.truetype("fonts/RobotoCondensed-Regular.ttf", 75)
     
-    d.text((0, 0), str(num), fill=txtColor, align='center')
+    d.text((-3, -15), str(num), align='center')
+
+    d.font = ImageFont.truetype("fonts/RobotoCondensed-Regular.ttf", 45)
+    d.text((-2, 70), "WATTS", align="center")
 
     return picture
 
