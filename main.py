@@ -14,8 +14,14 @@ def on_clicked(icon, item):
     print(item)
 
 # Make a 
-def image():
-    global number
+def image(num):
+
+    if number >= 50:
+        txtColor = 'red'
+    elif number > 16 and number < 50:
+        txtColor = 'orange'
+    else:
+        txtColor = 'lime'
 
     width = 64
     height = 64
@@ -24,8 +30,7 @@ def image():
     d = ImageDraw.Draw(picture)
     d.font = ImageFont.truetype("Hack-Regular.ttf", 50)
     
-    d.text((0, 0), str(number), fill=(255, 255, 255), align='center')
-    number += 1
+    d.text((0, 0), str(num), fill=txtColor, align='center')
 
     return picture
 
@@ -40,16 +45,13 @@ class IconThread(threading.Thread):
     def run(self):
         self.icon = pystray.Icon(*self._icon_args, **self._icon_kwargs)
         def on_activate(icon):
-            clicks.append(icon)
+            global number
 
-            if len(clicks) == 5:
-                icon.stop()
-            else:
-                icon.icon = images[len(clicks) % len(images)]
-
-        images = (image(), image())
+            icon.icon = image(number)
+            number += 1
+        
         self.icon = Icon('test',
-            icon=images[0],
+            icon=image(0),
             menu=menu(item('Toggle ', on_activate)))
 
         self.icon.run()
@@ -61,12 +63,14 @@ class IconThread(threading.Thread):
 icon_thread = IconThread('test name', menu=pystray.Menu(
             pystray.MenuItem(
                 'Test Button', on_clicked)
-            )
+            ),
         )
 icon_thread.start()
 
 try:
     while True:
         time.sleep(.1)
+        icon_thread.icon.icon = image(number)
+        number += 1
 except KeyboardInterrupt:
     icon_thread.stop()
