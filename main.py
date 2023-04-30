@@ -29,9 +29,9 @@ def image(num):
     width = 64
     height = 64
 
-    picture = Image.new("RGB", (width, height), (0, 0, 0))
+    picture = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     d = ImageDraw.Draw(picture)
-    d.font = ImageFont.truetype("Hack-Regular.ttf", 50)
+    d.font = ImageFont.truetype("Hack-Regular.ttf", 40)
     
     d.text((0, 0), str(num), fill=txtColor, align='center')
 
@@ -56,7 +56,7 @@ icon_thread.start()
 try:
     while True:
         time.sleep(1)
-        icon_thread.icon.icon = image(number)
+        icon_thread.icon.icon = image(LinuxSensors().get_power_consumption())
         icon_thread.icon.menu = popUpMenu(LinuxSensors())
         number += 1
 except KeyboardInterrupt:
