@@ -26,7 +26,7 @@ def image(num):
     else:
         txtColor = 'lime'
 
-    width = 64
+    width = 128
     height = 64
 
     picture = Image.new("RGBA", (width, height), (0, 0, 0, 0))

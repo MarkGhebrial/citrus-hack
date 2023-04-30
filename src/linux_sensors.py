@@ -25,7 +25,7 @@ class LinuxProcess(Process):
         contents = f.readline()
         contents = contents.split(" ")
 
-        utime = int(contents[13]) / clk_tc#/clk_tc
+        utime = int(contents[13]) / clk_tc
         stime = int(contents[14]) / clk_tc
 
         return float(utime + stime)
