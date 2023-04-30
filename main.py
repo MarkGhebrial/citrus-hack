@@ -2,6 +2,7 @@ import pystray
 import threading
 import time
 
+from menu import popUpMenu
 from pystray import Icon, Menu as menu, MenuItem as item
 from PIL import Image, ImageDraw, ImageColor, ImageFont
 
@@ -13,7 +14,7 @@ def on_clicked(icon, item):
     print(icon)
     print(item)
 
-# Make a 
+# Make an image using numbers
 def image(num):
 
     if number >= 50:
@@ -35,36 +36,19 @@ def image(num):
     return picture
 
 class IconThread(threading.Thread):
-    def __init__(self, *icon_args, **icon_kwargs):
-        self.icon = None
-        self._icon_args = icon_args
-        self._icon_kwargs = icon_kwargs
+    def __init__(self, icon):
+        self.icon = icon
 
         threading.Thread.__init__(self, daemon=True)
 
     def run(self):
-        self.icon = pystray.Icon(*self._icon_args, **self._icon_kwargs)
-        def on_activate(icon):
-            global number
-
-            icon.icon = image(number)
-            number += 1
-        
-        self.icon = Icon('test',
-            icon=image(0),
-            menu=menu(item('Toggle ', on_activate)))
-
         self.icon.run()
 
     def stop(self):
         if self.icon:
             self.icon.stop()
 
-icon_thread = IconThread('test name', menu=pystray.Menu(
-            pystray.MenuItem(
-                'Test Button', on_clicked)
-            ),
-        )
+icon_thread = IconThread(Icon('test', icon=image(0), menu=popUpMenu()))
 icon_thread.start()
 
 try:
