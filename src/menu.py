@@ -39,7 +39,7 @@ def popUpMenu(sensors: Sensors):
     for i in range(5):
         menu.append(
             item(
-                "{}: {}%".format(proc_list[i][0].name, proc_list[i][1]),
+                "{percent:>.2f}%: {name}".format(name=proc_list[i][0].name, percent=proc_list[i][1]),
                 None # No action when clicked
             )
         )
@@ -48,9 +48,3 @@ def popUpMenu(sensors: Sensors):
     menu.append(item('Exit', None))
 
     return pystray.Menu(*menu)
-
-    return menu
-
-def on_clicked(icon, item):
-    global state
-    state = not item.checked

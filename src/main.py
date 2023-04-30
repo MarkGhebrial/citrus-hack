@@ -21,13 +21,13 @@ def image(num):
     width = 128
     height = 128
 
-    picture = Image.new("RGBA", (width, height), (0, 0, 0, 255))
+    picture = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     d = ImageDraw.Draw(picture)
-    d.font = ImageFont.truetype("fonts/RobotoCondensed-Regular.ttf", 75)
+    d.font = ImageFont.truetype("fonts/RobotoCondensed-Bold.ttf", 75)
     
-    d.text((-3, -15), str(num), align='center')
+    d.text((-4, -15), str(num), align='center')
 
-    d.font = ImageFont.truetype("fonts/RobotoCondensed-Regular.ttf", 45)
+    d.font = ImageFont.truetype("fonts/RobotoCondensed-Bold.ttf", 45)
     d.text((-2, 70), "WATTS", align="center")
 
     return picture
