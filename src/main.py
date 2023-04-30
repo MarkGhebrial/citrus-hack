@@ -1,8 +1,14 @@
 import pystray
 import threading
 import time
+import platform
 
-from linux_sensors import LinuxSensors
+if platform.system() == "Linux":
+    from linux_sensors import LinuxSensors as Sensors
+elif platform.system() == "Windows":
+    from windows_sensors import WindowsSensors as Sensors
+else:
+    exit("Platform {} not supported".format(platform.platform))
 
 from menu import popUpMenu
 from pystray import Icon, Menu as menu, MenuItem as item
@@ -17,7 +23,7 @@ def on_clicked(icon, item):
     print(item)
 
 # Make an image using numbers
-def image(num):
+def generate_icon(num):
     width = 128
     height = 128
 
@@ -45,14 +51,18 @@ class IconThread(threading.Thread):
         if self.icon:
             self.icon.stop()
 
-icon_thread = IconThread(Icon('TODO: Update Name', icon=image(0), menu=popUpMenu(LinuxSensors())))
-icon_thread.start()
+if __name__ == "__main__":
 
-try:
-    while True:
-        time.sleep(1)
-        icon_thread.icon.icon = image(LinuxSensors().get_power_consumption())
-        icon_thread.icon.menu = popUpMenu(LinuxSensors())
-        number += 1
-except KeyboardInterrupt:
-    icon_thread.stop()
+    sensors = Sensors()
+
+    icon_thread = IconThread(Icon('TODO: Update Name', icon=generate_icon(0), menu=popUpMenu(sensors)))
+    icon_thread.start()
+
+    try:
+        while True:
+            time.sleep(1)
+            icon_thread.icon.icon = generate_icon(sensors.get_power_consumption())
+            icon_thread.icon.menu = popUpMenu(sensors)
+            number += 1
+    except KeyboardInterrupt:
+        icon_thread.stop()
